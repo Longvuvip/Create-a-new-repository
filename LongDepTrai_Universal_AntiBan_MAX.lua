@@ -1,20 +1,14 @@
--- 🛡️ LongDepTrai - Universal AntiBan MAX Protection (All Games)
-
 if getgenv then getgenv().SecureMode = true end
 
--- ✅ Chặn Kick & BreakJoints
 local mt = getrawmetatable(game)
 setreadonly(mt, false)
 local old = mt.__namecall
 mt.__namecall = newcclosure(function(self, ...)
     local method = getnamecallmethod()
-    if method == "Kick" or method == "BreakJoints" then
-        return nil
-    end
+    if method == "Kick" or method == "BreakJoints" then return nil end
     return old(self, ...)
 end)
 
--- 🔐 Chặn Remote log/report
 local function nullifyRemoteCalls(remoteNames)
     for _, name in ipairs(remoteNames) do
         for _, obj in pairs(getgc(true)) do
@@ -26,7 +20,6 @@ local function nullifyRemoteCalls(remoteNames)
 end
 nullifyRemoteCalls({"FireServer", "InvokeServer", "ReportAbuse"})
 
--- 👁️ Fake giá trị đáng nghi (walkspeed, jumppower)
 local lp = game:GetService("Players").LocalPlayer
 local function protectHumanoid()
     local char = lp.Character or lp.CharacterAdded:Wait()
@@ -44,7 +37,6 @@ end
 protectHumanoid()
 lp.CharacterAdded:Connect(function() task.wait(1) protectHumanoid() end)
 
--- 👀 Ẩn khỏi camera
 task.spawn(function()
     local cam = workspace:FindFirstChildWhichIsA("Camera")
     if cam and cam.CameraSubject == lp.Character then
@@ -52,4 +44,19 @@ task.spawn(function()
     end
 end)
 
-print("✅ AntiBan MAX đã kích hoạt")
+-- 👤 Fake DisplayName + UserId + Ẩn bảng tên
+pcall(function()
+    lp.Name = "Anonymous_" .. math.random(1000, 9999)
+    lp.DisplayName = "Guest_" .. math.random(100, 999)
+    lp.UserId = 12345678 + math.random(10000, 99999)
+end)
+
+pcall(function()
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "✅ AntiBan + Spoof",
+        Text = "Đã bật bảo vệ & fake tên/ID",
+        Duration = 5
+    })
+end)
+
+print("✅ AntiBan + Fake Name/ID đã bật")
